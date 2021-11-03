@@ -102,7 +102,7 @@ export default function MovieListPage(props: any) {
     }
     setLoading(true);
     HttpService.get(
-      authenticated ? "movies/auth/all" : "movies/noauth/all",
+      "movies/all",
       "",
       {
         start: start ?? 0,
@@ -137,7 +137,7 @@ export default function MovieListPage(props: any) {
     setEnd(limit);
     setLoading(false);
     loadMoreData(true, 0, 50);
-    debugger;
+    // debugger;
     return () => {
       ourRequest.cancel();
     };
@@ -160,13 +160,13 @@ export default function MovieListPage(props: any) {
       movie_id: id,
     })
       .then((res: any) => {
-        const newData = data;
+        const newData = [...data];
         if (newData.length > index) {
           newData[index].user_rating = res.data;
         }
         setData(data);
         setModalVisible(false);
-        setRatingModalData(null);
+        setRatingModalData(undefined);
         notification["success"]({
           message: "Successfully rated the movie",
         });
@@ -243,7 +243,7 @@ export default function MovieListPage(props: any) {
       <InfiniteScroll
         dataLength={data?.length}
         next={() => {
-            debugger;
+          // debugger;
           setStart(end + 1);
           setEnd(end + limit);
           loadMoreData(false, end + 1, limit);
@@ -385,7 +385,11 @@ export default function MovieListPage(props: any) {
       >
         {!props.enableBulkRatingButton && (
           <MovieRating
-            rating={ratingModalData?.movie?.user_rating?.user_rating ?? null}
+            rating={
+              ratingModalData?.movie?.user_rating?.user_rating
+                ? ratingModalData?.movie?.user_rating?.user_rating
+                : 0
+            }
             movieTitle={ratingModalData?.movie?.title}
             onSaveRating={onSaveRating}
           />
